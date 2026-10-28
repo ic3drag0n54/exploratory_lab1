@@ -1,58 +1,104 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>My map</title>
+  <title>Tarantula Migration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-  <style> body { margin: 0; } #map { position: absolute; inset: 0; } </style>
+
+  <style>
+    body { margin: 0; }
+    #map { position: absolute; inset: 0; }
+
+    #legend {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1;
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      font: 14px sans-serif;
+      box-shadow: 0 1px 5px #888;
+    }
+
+    #legend label {
+      display: block;
+      margin-top: 8px;
+    }
+  </style>
 </head>
+
 <body>
   <div id="map"></div>
-  <div id="legend" style="
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
-  background: white;
-  padding: 12px;
-  border-radius: 6px;
-  font: 14px sans-serif;
-">
-  <strong>Map layers</strong>
 
-  <label style="display:block; margin-top:8px">
-    <input type="checkbox" checked
-      onchange="toggleLayer('bear-icons', this.checked)">
-    Bear sightings
-  </label>
+  <div id="legend">
+    <strong>Map layers</strong>
 
-  <label style="display:block; margin-top:8px">
-    <input type="checkbox" checked
-      onchange="toggleLayer('park', this.checked)">
-    Parks
-  </label>
+    <label>
+      <input type="checkbox" data-layer="park" checked>
+      Parks
+    </label>
 
-  <label style="display:block; margin-top:8px">
-    <input type="checkbox" checked
-      onchange="toggleLayer('urban', this.checked)">
-    Urban areas
-  </label>
+    <label>
+      <input type="checkbox" data-layer="highway_minor" checked>
+      Minor roads
+    </label>
 
-  <label style="display:block; margin-top:8px">
-    <input type="checkbox" checked
-      onchange="toggleLayer('highway_minor', this.checked)">
-    Minor roads
-  </label>
-</div>
+    <label>
+      <input type="checkbox" data-layer="roadsmall" checked>
+      Small roads
+    </label>
+
+    <label>
+      <input type="checkbox" data-layer="urban" checked>
+      Urban areas
+    </label>
+
+  </div>
+
   <script>
     const map = new maplibregl.Map({
       container: 'map',
-      style: 'positron.json',        // the file you downloaded from Maputnik
-      center: [-123.25, 49.26],    // longitude, latitude
+      style: 'positron.json',
+      center: [-103.22, 38.05],
       zoom: 11
     });
+
     map.addControl(new maplibregl.NavigationControl());
+
+    // Connect each checkbox to its map layer.
+    document.querySelectorAll('#legend input[data-layer]')
+      .forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+          const id = checkbox.dataset.layer;
+
+          if (map.getLayer(id)) {
+            map.setLayoutProperty(
+              id,
+              'visibility',
+              checkbox.checked ? 'visible' : 'none'
+            );
+          } else {
+            console.warn('Layer not found in map style:', id);
+          }
+        });
+      });
+
+    map.on('load', () => {
+      // Hide checkboxes for layer IDs that don't exist in the style.
+      document.querySelectorAll('#legend input[data-layer]')
+        .forEach((checkbox) => {
+          if (!map.getLayer(checkbox.dataset.layer)) {
+            checkbox.disabled = true;
+            checkbox.parentElement.title =
+              'This layer ID was not found in the loaded style.';
+          }
+        });
+    });
   </script>
 </body>
 </html>
