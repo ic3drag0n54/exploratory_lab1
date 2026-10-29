@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My map</title>
+  <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <style> body { margin: 0; } #map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+} 
+  
+#panel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  width: 260px;
+  max-width: calc(100vw - 56px);
+  box-sizing: border-box;
+  background: rgba(90, 90, 90, 0.88);
+  color: #f2f2f2;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+#panel h1 {
+  font-size: 16px;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+#panel p {
+  margin: 0 0 12px;
+  color: #e0e0e0;
+}
+
+
+#views {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #f2f2f2;
+  font-size: 13px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 38px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background-color: #777;
+  border-radius: 22px;
+  transition: 0.2s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.switch input:checked + .slider {
+  background-color: #53dbfc;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(16px);
+}
+
+.switch input:focus-visible + .slider {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.switch input:disabled + .slider {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+#view-note {
+  font-size: 11px;
+  color: #e0e0e0;
+  margin-top: 10px;
+}
+
+/* Font for the entire legend panel */
+#panel {
+  font-family: "Tahoma", Arial, sans-serif;
+}
+
+/* Colour key beside each layer name */
+.layer-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+}
+
+/* layer colors */
+.swatch-spiders {
+  background-color: rgba(13, 100, 171, 1);
+  border-radius: 50%;
+}
+
+.swatch-roadssmall {
+  background-color: rgba(255, 162, 162, 1);
+}
+
+.swatch-spiders2{
+  background-color: rgba(247, 146, 34, 1);
+}
+
+.swatch-grassland {
+  background-color: rgba(127, 207, 157, 0.66);
+}
+
+.swatch-spider_protect {
+  background-color: rgba(174, 49, 0, 1);
+  border-radius: 50%;
+}
+.swatch-all_protect {
+  background-color: rgba(20, 105, 0, 1);
+  border-radius: 50%;
+}
+
+</style>
+</head>
+<body>
+  <div id="map"></div>  
+  <div id="panel">
+  <h1>Colorado Tarantula Migration</h1>
+  <h2>
+  </h2>
+  <p>Each year in September and October, thousands of male Texas Brown Tarantulas leave their
+  dens in search of mates across the American Southwest. In the state of Colorado, the Comanche National Grasslands
+  are one of the best places to witness the mass migration, drawing thousands of tourists every year. Unfortunately, increased
+  vehicle traffic on roads within the grasslands contributes to high mortality for male tarantulas. 
+  
+  This map shows locations of tarantula sightings overlayed with highway and road networks in the grasslands
+  to highlight sensitivity of the tarantulas to heightened vehicle traffic.  </p>
+
+ 
+<div id="views" aria-label="Toggle map layers">
+
+  <div class="layer-heading"></div>
+
+  <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-spiders2"></span>
+      Tarantulas near Highway
+    </span>
+    <label class="switch">
+      <input type="checkbox" data-layer="spiders2" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-all_protect"></span>
+      Tarantulas in Protected Area
+    </span>
+    <label class="switch">
+      <input type="checkbox" data-layer="all_protect" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-spider_protect"></span>
+      Protected Tarantulas Near Highway
+    </span>
+    <label class="switch">
+      <input type="checkbox" data-layer="spider_protect" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+    <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-spiders"></span>
+      Tarantulas Outside Protected Area 
+    </span>
+    <label class="switch">
+      <input type="checkbox" data-layer="spiders" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+  
+      <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-grassland"></span>
+      Comanche National Grasslands
+    </span>
+      
+    </label>
+  </div>
+       <div class="layer-row">
+    <span class="layer-name">
+      <span class="legend-swatch swatch-roadssmall"></span>
+      Roads
+    </span>
+      
+    </label>
+  </div>
+
+</div>
+
+
+
+  <script>
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'positron.json',        // the file you downloaded from Maputnik
+      center: [-103.590339,37.835986],    // longitude, latitude
+      zoom: 10
+    });
+    map.addControl(new maplibregl.NavigationControl());
+	
+	
+map.on('load', () => {
+  const switches = document.querySelectorAll(
+    '#views input[data-layer]'
+  );
+
+  switches.forEach((input) => {
+    const layerId = input.dataset.layer;
+
+    if (!map.getLayer(layerId)) {
+      console.warn('Layer not found in style:', layerId);
+      input.checked = false;
+      input.disabled = true;
+      return;
+    }
+
+    input.checked =
+      map.getLayoutProperty(layerId, 'visibility') !== 'none';
+
+    input.addEventListener('change', () => {
+      map.setLayoutProperty(
+        layerId,
+        'visibility',
+        input.checked ? 'visible' : 'none'
+      );
+    });
+  });
+});
+
+
+  </script>
+</body>
+</html>
