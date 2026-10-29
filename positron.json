@@ -23,7 +23,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://api.maptiler.com/maps/streets-v4/?key=dvnqs0artgB7boeij4d8#1/0/0"
+      "url": "https://tiles.openfreemap.org/planet"
     },
     "roadsmall": {
       "type": "geojson",
@@ -51,7 +51,7 @@
     }
   },
   "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
-  "glyphs": "https://api.maptiler.com/maps/streets-v4/?key=dvnqs0artgB7boeij4d8#1/0/0",
+  "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
