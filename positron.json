@@ -23,7 +23,7 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://api.maptiler.com/tiles/v3-openmaptiles/tiles.json?key=dvnqs0artgB7boeij4d8 "
+      "url": "https://api.maptiler.com/maps/streets-v4/?key=dvnqs0artgB7boeij4d8#1/0/0"
     },
     "roadsmall": {
       "type": "geojson",
@@ -51,7 +51,7 @@
     }
   },
   "sprite": "https://openmaptiles.github.io/positron-gl-style/sprite",
-  "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=dvnqs0artgB7boeij4d8 ",
+  "glyphs": "https://api.maptiler.com/maps/streets-v4/?key=dvnqs0artgB7boeij4d8#1/0/0",
   "layers": [
     {
       "id": "background",
